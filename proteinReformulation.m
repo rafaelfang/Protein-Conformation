@@ -4,14 +4,14 @@
 % coords(:,1) = sin(coords(:,3));
 % coords(:,2) = cos(coords(:,3));
 
-% load Protein;
-% points = Protein;
-% totalPoints=1000;
-% coords=points(1:totalPoints,:);
-load example1
-points=example1;
-totalPoints=500;
+load Protein;
+points = Protein;
+totalPoints=1000;
 coords=points(1:totalPoints,:);
+% load example1
+% points=example1;
+% totalPoints=500;
+% coords=points(1:totalPoints,:);
 
 
 pointsAlign=200;
@@ -67,7 +67,7 @@ c = transform.c;
 T = transform.T;
 b = transform.b;
 
-secondHalfRecover = b*secondHalf*T+repmat(c(1,:),size(secondHalf,1),1) ;
+secondHalfRecover = secondHalf*T+repmat(c(1,:),size(secondHalf,1),1) ;
     
 
 subplot(2,2,4);
