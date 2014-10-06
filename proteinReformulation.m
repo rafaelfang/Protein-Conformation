@@ -14,7 +14,7 @@ coords=points(1:totalPoints,:);
 % coords=points(1:totalPoints,:);
 
 
-pointsAlign=200;
+pointsAlign=50;
 
 
 
@@ -38,6 +38,7 @@ R=rotx(90);
 secondHalf=R*secondHalf';
 secondHalf=secondHalf';
 subplot(2,2,2);
+%figure;
 plot3(firstHalf(:,1),firstHalf(:,2),firstHalf(:,3));
 hold on
 plot3(secondHalf(:,1),secondHalf(:,2),secondHalf(:,3),'r');
@@ -52,6 +53,7 @@ Z=zeros(size(secondHalf));
 Z(:,3)=10;
 secondHalf=secondHalf-Z;
 subplot(2,2,3);
+%figure;
 plot3(firstHalf(:,1),firstHalf(:,2),firstHalf(:,3));
 hold on
 plot3(secondHalf(:,1),secondHalf(:,2),secondHalf(:,3),'r');
@@ -71,6 +73,7 @@ secondHalfRecover = secondHalf*T+repmat(c(1,:),size(secondHalf,1),1) ;
     
 
 subplot(2,2,4);
+%figure;
 plot3(firstHalf(:,1),firstHalf(:,2),firstHalf(:,3));
 hold on
 plot3(secondHalfRecover(:,1),secondHalfRecover(:,2),secondHalfRecover(:,3),'r');
