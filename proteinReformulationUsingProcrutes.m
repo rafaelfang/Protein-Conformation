@@ -78,7 +78,7 @@ plot3(firstHalf(:,1),firstHalf(:,2),firstHalf(:,3));
 hold on
 plot3(secondHalfRecover(:,1),secondHalfRecover(:,2),secondHalfRecover(:,3),'r');
 hold off
-title(strcat('recoverd from procrustes with difference:',int2str(d)))
+title(strcat('recoverd from procrustes with difference:',num2str(d)))
 xlabel('x')
 ylabel('y')
 zlabel('z')

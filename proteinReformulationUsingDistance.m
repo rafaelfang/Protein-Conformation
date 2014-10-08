@@ -22,7 +22,7 @@ half=((totalPoints+pointsAlign)/2);
 firstHalf=coords(1:half,:);
 secondHalf=coords(size(firstHalf,1)-pointsAlign+1:end,:);
 % figure;
-subplot(2,2,1);
+subplot(2,3,1);
 plot3(firstHalf(:,1),firstHalf(:,2),firstHalf(:,3));
 hold on
 plot3(secondHalf(:,1),secondHalf(:,2),secondHalf(:,3),'r');
@@ -33,60 +33,41 @@ ylabel('y')
 zlabel('z')
 
 
+s1 = pdist2(firstHalf,firstHalf);
+s2 = pdist2(secondHalf,secondHalf);
+s=zeros(totalPoints,totalPoints);
+s(1:half,1:half)=s1;
+s(half-pointsAlign+1:end,half-pointsAlign+1:end)=s2;
+subplot(2,3,2);
+imagesc(s);
+title('s:combine s1 and s2')
 
-R=rotx(90);
-secondHalf=R*secondHalf';
-secondHalf=secondHalf';
-subplot(2,2,2);
-% figure;
-plot3(firstHalf(:,1),firstHalf(:,2),firstHalf(:,3));
+s(1:half-pointsAlign,half+1:end)=Inf;
+s(half+1:end,1:half-pointsAlign)=Inf;
+subplot(2,3,3);
+imagesc(s);
+title('s:set two black part into Inf')
+
+s = FastFloyd(s);
+subplot(2,3,4);
+imagesc(s);
+title('s:after applying floyd')
+
+
+p=cmdscale(s);
+p=p(:,1:3);
+firstHalfRecovered=p(1:half,:);
+secondHalfRecovered=p(size(firstHalfRecovered,1)-pointsAlign+1:end,:);
+subplot(2,3,5);
+plot3(firstHalfRecovered(:,1),firstHalfRecovered(:,2),firstHalfRecovered(:,3));
 hold on
-plot3(secondHalf(:,1),secondHalf(:,2),secondHalf(:,3),'r');
-title('rotated')
+plot3(secondHalfRecovered(:,1),secondHalfRecovered(:,2),secondHalfRecovered(:,3),'r');
 hold off
+diff=procrustes(coords,p);
+title(strcat('Use CMDSCALE to recover points and the difference from original is: ',num2str(diff)))
 xlabel('x')
 ylabel('y')
 zlabel('z')
-
-
-Z=zeros(size(secondHalf));
-Z(:,3)=10;
-secondHalf=secondHalf-Z;
-subplot(2,2,3);
-%figure;
-plot3(firstHalf(:,1),firstHalf(:,2),firstHalf(:,3));
-hold on
-plot3(secondHalf(:,1),secondHalf(:,2),secondHalf(:,3),'r');
-title('shifted')
-hold off
-xlabel('x')
-ylabel('y')
-zlabel('z')
-
-
-[d,Z,transform] = procrustes(firstHalf(half-pointsAlign+1:half,:),secondHalf(1:pointsAlign,:));
-c = transform.c;
-T = transform.T;
-b = transform.b;
-
-secondHalfRecover = secondHalf*T+repmat(c(1,:),size(secondHalf,1),1) ;
-    
-
-subplot(2,2,4);
-%figure;
-plot3(firstHalf(:,1),firstHalf(:,2),firstHalf(:,3));
-hold on
-plot3(secondHalfRecover(:,1),secondHalfRecover(:,2),secondHalfRecover(:,3),'r');
-hold off
-title(strcat('recoverd from procrustes with difference:',int2str(d)))
-xlabel('x')
-ylabel('y')
-zlabel('z')
-
-
-
-
-
 
 
 
