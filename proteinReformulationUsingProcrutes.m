@@ -1,4 +1,6 @@
-
+clear all
+clc
+close all
 % points = 0:pi/50:10*pi;
 % coords(:,3)=points(1:500);
 % coords(:,1) = sin(coords(:,3));
@@ -14,14 +16,12 @@ coords=points(1:totalPoints,:);
 % coords=points(1:totalPoints,:);
 
 
-pointsAlign=50;
+pointsAlign=20;
 
-
-
-half=(totalPoints/2);
+half=((totalPoints+pointsAlign)/2);
 firstHalf=coords(1:half,:);
-secondHalf=coords(half+1:end,:);
-figure;
+secondHalf=coords(size(firstHalf,1)-pointsAlign+1:end,:);
+% figure;
 subplot(2,2,1);
 plot3(firstHalf(:,1),firstHalf(:,2),firstHalf(:,3));
 hold on
@@ -38,7 +38,7 @@ R=rotx(90);
 secondHalf=R*secondHalf';
 secondHalf=secondHalf';
 subplot(2,2,2);
-%figure;
+% figure;
 plot3(firstHalf(:,1),firstHalf(:,2),firstHalf(:,3));
 hold on
 plot3(secondHalf(:,1),secondHalf(:,2),secondHalf(:,3),'r');
@@ -78,7 +78,7 @@ plot3(firstHalf(:,1),firstHalf(:,2),firstHalf(:,3));
 hold on
 plot3(secondHalfRecover(:,1),secondHalfRecover(:,2),secondHalfRecover(:,3),'r');
 hold off
-title('recoverd from procrustes')
+title(strcat('recoverd from procrustes with difference:',int2str(d)))
 xlabel('x')
 ylabel('y')
 zlabel('z')
