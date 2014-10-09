@@ -6,17 +6,21 @@ close all
 % coords(:,1) = sin(coords(:,3));
 % coords(:,2) = cos(coords(:,3));
 
-load Protein;
-points = Protein;
-totalPoints=1000;
-coords=points(1:totalPoints,:);
+% load Protein;
+% points = Protein;
+% totalPoints=1000;
+% coords=points(1:totalPoints,:);
 % load example1
 % points=example1;
 % totalPoints=500;
 % coords=points(1:totalPoints,:);
+load T0675
+points = T0675(:,1:3);
+totalPoints=57;
+coords=points(1:totalPoints,:);
+pointsAlign=15;
 
 
-pointsAlign=50;
 
 half=((totalPoints+pointsAlign)/2);
 firstHalf=coords(1:half,:);
