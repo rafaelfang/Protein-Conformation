@@ -1,4 +1,4 @@
-function [] =experimentMethods(proteinName,points,overlappingSize,alpha)
+function [diff1,diff2] =experimentMethods(proteinName,points,overlappingSize,alpha)
 %% prepare dataset
 
 
@@ -52,7 +52,7 @@ ylabel('y')
 zlabel('z')
 
 
-[d,Z,transform] = procrustes(firstHalf(half-overlappingSize+1:half,:),secondHalf(1:overlappingSize,:));
+[diff1,Z,transform] = procrustes(firstHalf(half-overlappingSize+1:half,:),secondHalf(1:overlappingSize,:));
 c = transform.c;
 T = transform.T;
 b = transform.b;
@@ -66,7 +66,7 @@ plot3(firstHalf(:,1),firstHalf(:,2),firstHalf(:,3));
 hold on
 plot3(secondHalfRecover(:,1),secondHalfRecover(:,2),secondHalfRecover(:,3),'r');
 hold off
-title({'Procrustes result:'; strcat('diff = ',num2str(d))})
+title({'Procrustes result:'; strcat('diff = ',num2str(diff1))})
 xlabel('x')
 ylabel('y')
 zlabel('z')
@@ -124,14 +124,14 @@ plot3(firstHalfRecovered(:,1),firstHalfRecovered(:,2),firstHalfRecovered(:,3));
 hold on
 plot3(secondHalfRecovered(:,1),secondHalfRecovered(:,2),secondHalfRecovered(:,3),'r');
 hold off
-diff=procrustes(coords,p);
-title(strcat('shortest path-based result: diff=', num2str(diff)))
+diff2=procrustes(coords,p);
+title(strcat('shortest path-based result: diff=', num2str(diff2)))
 xlabel('x')
 ylabel('y')
 zlabel('z')
 
-set(gcf,'PaperType','usletter')
-print('-dpng','-r0',strcat(proteinName,'Alpha',num2str(alpha),'OverlappingSize',num2str(overlappingSize)))
+% set(gcf,'PaperType','usletter')
+% print('-dpng','-r0',strcat(proteinName,'Alpha',num2str(alpha),'OverlappingSize',num2str(overlappingSize)))
 
 end
 
