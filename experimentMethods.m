@@ -109,7 +109,7 @@ subplot(3,3,7);
 imagesc(s);
 title('s:set two black part into Inf')
 
-s = FastFloyd(s);
+s = Floyd_Warshall(s);
 subplot(3,3,8);
 imagesc(s);
 title('s:after applying fast floyd')
