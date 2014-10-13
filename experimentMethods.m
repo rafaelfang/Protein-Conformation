@@ -15,7 +15,7 @@ plot3(firstHalf(:,1),firstHalf(:,2),firstHalf(:,3));
 hold on
 plot3(secondHalf(:,1),secondHalf(:,2),secondHalf(:,3),'r');
 hold off
-title({'Original Structure'; strcat('set overlapping size: ', num2str(overlappingSize))})
+title({strcat(proteinName,' Original Structure'); strcat('set overlapping size: ', num2str(overlappingSize))})
 xlabel('x')
 ylabel('y')
 zlabel('z')

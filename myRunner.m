@@ -2,10 +2,7 @@ clear all
 clc
 close all
 
-
-
 rng(1)
-
 proteinName='T0662';
 load (proteinName);
 
