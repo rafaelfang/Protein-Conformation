@@ -3,13 +3,13 @@ clc
 close all
 
 rng(1)
-proteinName='T0662';
+proteinName='T0675';
 load (proteinName);
 
-rng(1)
+
 overlappingSizeArray=[10,20,40];
 alphaArray=[0,0.01,0.1,1];
-points = T0662(1:56,1:3);
+points = T0675(1:56,1:3);
 diff1=zeros(size(alphaArray,2),size(overlappingSizeArray,2));
 diff2=zeros(size(alphaArray,2),size(overlappingSizeArray,2));
 for i=1:size(overlappingSizeArray,2)
