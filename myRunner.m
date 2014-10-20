@@ -2,17 +2,20 @@ clear all
 clc
 close all
 
-
-
 rng(1)
 
-proteinName='T0662';
+proteinName='T0652';
 load (proteinName);
+points = T0652(1:100,1:3);
 
-rng(1)
+
+% proteinName='T0649';
+% load (proteinName);
+% points = T0649(101:200,1:3);
+
 overlappingSizeArray=[10,20,40];
 alphaArray=[0,0.01,0.1,1];
-points = T0662(1:56,1:3);
+
 diff1=zeros(size(alphaArray,2),size(overlappingSizeArray,2));
 diff2=zeros(size(alphaArray,2),size(overlappingSizeArray,2));
 for i=1:size(overlappingSizeArray,2)
