@@ -1,5 +1,13 @@
-function [diff1,diff2] =experimentMethods(proteinName,points,overlappingSize,alpha)
+% function [diff1,diff2] =experimentMethods(proteinName,points,overlappingSize,alpha)
 %% prepare dataset
+
+proteinName='T0675';
+load (proteinName);
+
+
+overlappingSize=10;
+alpha=0.01;
+points = T0675(1:56,1:3);
 
 
 totalPoints=size(points,1);
@@ -7,30 +15,49 @@ coords=points(1:totalPoints,:);
 
 
 half=((totalPoints+overlappingSize)/2);
-firstHalf=coords(1:half,:);
-secondHalf=coords(size(firstHalf,1)-overlappingSize+1:end,:);
+firstHalfOrigin=coords(1:half,:);
+secondHalfOrigin=coords(size(firstHalfOrigin,1)-overlappingSize+1:end,:);
+
+
+
+
 % figure;
 subplot(3,3,1);
-plot3(firstHalf(:,1),firstHalf(:,2),firstHalf(:,3));
+plot3(firstHalfOrigin(:,1),firstHalfOrigin(:,2),firstHalfOrigin(:,3));
+hold on
+plot3(secondHalfOrigin(:,1),secondHalfOrigin(:,2),secondHalfOrigin(:,3),'r');
+hold off
+title({strcat(proteinName,' Original Structure'); strcat('set overlapping size: ', num2str(overlappingSize))})
+xlabel('x')
+ylabel('y')
+zlabel('z')
+
+
+
+
+noise=alpha*randn(half,3);
+secondHalf=secondHalfOrigin+noise;
+subplot(3,3,2);
+plot3(firstHalfOrigin(:,1),firstHalfOrigin(:,2),firstHalfOrigin(:,3));
 hold on
 plot3(secondHalf(:,1),secondHalf(:,2),secondHalf(:,3),'r');
 hold off
-title({'Original Structure'; strcat('set overlapping size: ', num2str(overlappingSize))})
+title({strcat('add noise: ',num2str(alpha),'*randn(half,3)');' to second half'})
 xlabel('x')
 ylabel('y')
 zlabel('z')
 
 
 %% superimposing overlapping region method
-R=rotx(90);
+R=rotx(30);
 secondHalf=R*secondHalf';
 secondHalf=secondHalf';
-subplot(3,3,2);
+subplot(3,3,3);
 % figure;
-plot3(firstHalf(:,1),firstHalf(:,2),firstHalf(:,3));
+plot3(firstHalfOrigin(:,1),firstHalfOrigin(:,2),firstHalfOrigin(:,3));
 hold on
 plot3(secondHalf(:,1),secondHalf(:,2),secondHalf(:,3),'r');
-title('rotated second half 90 degreee')
+title('rotated second half 30 degreee')
 hold off
 xlabel('x')
 ylabel('y')
@@ -40,9 +67,9 @@ zlabel('z')
 Z=zeros(size(secondHalf));
 Z(:,3)=10;
 secondHalf=secondHalf-Z;
-subplot(3,3,3);
+subplot(3,3,4);
 %figure;
-plot3(firstHalf(:,1),firstHalf(:,2),firstHalf(:,3));
+plot3(firstHalfOrigin(:,1),firstHalfOrigin(:,2),firstHalfOrigin(:,3));
 hold on
 plot3(secondHalf(:,1),secondHalf(:,2),secondHalf(:,3),'r');
 title('shifted second half away')
@@ -52,7 +79,7 @@ ylabel('y')
 zlabel('z')
 
 
-[diff1,Z,transform] = procrustes(firstHalf(half-overlappingSize+1:half,:),secondHalf(1:overlappingSize,:));
+[~,Z,transform] = procrustes(firstHalfOrigin(half-overlappingSize+1:half,:),secondHalf(1:overlappingSize,:),'scaling',false);
 c = transform.c;
 T = transform.T;
 b = transform.b;
@@ -60,13 +87,14 @@ b = transform.b;
 secondHalfRecover = secondHalf*T+repmat(c(1,:),size(secondHalf,1),1) ;
     
 
-subplot(3,3,4);
+subplot(3,3,5);
 %figure;
-plot3(firstHalf(:,1),firstHalf(:,2),firstHalf(:,3));
+plot3(firstHalfOrigin(:,1),firstHalfOrigin(:,2),firstHalfOrigin(:,3));
 hold on
 plot3(secondHalfRecover(:,1),secondHalfRecover(:,2),secondHalfRecover(:,3),'r');
 hold off
-title({'Procrustes result:'; strcat('diff = ',num2str(diff1))})
+diff1=RMSD( secondHalfOrigin,secondHalfRecover);
+title(strcat('superpos RMSD:',num2str(diff1)))
 xlabel('x')
 ylabel('y')
 zlabel('z')
@@ -75,45 +103,42 @@ zlabel('z')
 
 %% shortest path-based method
 
-firstHalf=coords(1:half,:);
-secondHalf=coords(size(firstHalf,1)-overlappingSize+1:end,:);
+firstHalfOrigin=coords(1:half,:);
+secondHalfOrigin=coords(size(firstHalfOrigin,1)-overlappingSize+1:end,:);
 
 
-noise=alpha*randn(half,3);
+
 %add noise to second half
-secondHalf=secondHalf+noise;
-subplot(3,3,5);
-plot3(firstHalf(:,1),firstHalf(:,2),firstHalf(:,3));
-hold on
-plot3(secondHalf(:,1),secondHalf(:,2),secondHalf(:,3),'r');
-hold off
-title(strcat('add noise: ',num2str(alpha),'*randn(half,3) to second half'))
-xlabel('x')
-ylabel('y')
-zlabel('z')
+secondHalf=secondHalfOrigin+noise;
 
 
 
-s1 = pdist2(firstHalf,firstHalf);
+
+
+
+s1 = pdist2(firstHalfOrigin,firstHalfOrigin);
 s2 = pdist2(secondHalf,secondHalf);
 s=zeros(totalPoints,totalPoints);
 s(1:half,1:half)=s1;
 s(half-overlappingSize+1:end,half-overlappingSize+1:end)=s2;
 subplot(3,3,6);
 imagesc(s);
+%colorbar;
 title('s:combine s1 and s2')
 
 s(1:half-overlappingSize,half+1:end)=Inf;
 s(half+1:end,1:half-overlappingSize)=Inf;
 subplot(3,3,7);
 imagesc(s);
-title('s:set two black part into Inf')
+%colorbar;
+title('s:set two blue parts into Inf')
 
 % s = Floyd_Warshall(s);
 s=ShortPath(s);
 subplot(3,3,8);
 imagesc(s);
-title('s:after applying fast floyd')
+%colorbar;
+title('s:after Floyd')
 
 
 p=cmdscale(s);
@@ -125,8 +150,8 @@ plot3(firstHalfRecovered(:,1),firstHalfRecovered(:,2),firstHalfRecovered(:,3));
 hold on
 plot3(secondHalfRecovered(:,1),secondHalfRecovered(:,2),secondHalfRecovered(:,3),'r');
 hold off
-diff2=procrustes(coords,p);
-title(strcat('shortest path-based result: diff=', num2str(diff2)))
+diff2=RMSD( secondHalfOrigin,secondHalfRecovered );
+title(strcat('shortest path RMSD:', num2str(diff2)))
 xlabel('x')
 ylabel('y')
 zlabel('z')
@@ -134,6 +159,4 @@ zlabel('z')
 % set(gcf,'PaperType','usletter')
 % print('-dpng','-r0',strcat(proteinName,'Alpha',num2str(alpha),'OverlappingSize',num2str(overlappingSize)))
 
-end
-
-
+%  end
