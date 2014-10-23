@@ -1,5 +1,17 @@
- function [diff1,diff2] =experimentMethods(proteinName,points,overlappingSize,alpha)
+
 %% prepare dataset
+clear all
+clc
+close all
+
+rng(1)
+proteinName='T0675';
+load (proteinName);
+
+
+overlappingSize=10;
+alpha=0.01;
+points = T0675(1:56,1:3);
 
 
 totalPoints=size(points,1);
@@ -157,7 +169,6 @@ xlabel('x')
 ylabel('y')
 zlabel('z')
 
-%  set(gcf,'PaperType','usletter')
-%  print('-dpng','-r0',strcat(proteinName,'Alpha',num2str(alpha),'OverlappingSize',num2str(overlappingSize)))
+% set(gcf,'PaperType','usletter')
+% print('-dpng','-r0',strcat(proteinName,'Alpha',num2str(alpha),'OverlappingSize',num2str(overlappingSize)))
 
-  end
