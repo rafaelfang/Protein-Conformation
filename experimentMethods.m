@@ -28,11 +28,11 @@ zlabel('z')
 
 
 noise=alpha*randn(half,3);
-secondHalf=secondHalfOrigin+noise;
+secondHalfAddedNoise=secondHalfOrigin+noise;
 subplot(4,3,2);
 plot3(firstHalfOrigin(:,1),firstHalfOrigin(:,2),firstHalfOrigin(:,3));
 hold on
-plot3(secondHalf(:,1),secondHalf(:,2),secondHalf(:,3),'r');
+plot3(secondHalfAddedNoise(:,1),secondHalfAddedNoise(:,2),secondHalfAddedNoise(:,3),'r');
 hold off
 title({strcat('add noise: ',num2str(alpha),'*randn(half,3)');' to second half'})
 xlabel('x')
@@ -42,13 +42,13 @@ zlabel('z')
 
 %% superimposing overlapping region method
 R=rotx(30);
-secondHalf=R*secondHalf';
-secondHalf=secondHalf';
+secondHalfAddedNoiseRotated=R*secondHalfAddedNoise';
+secondHalfAddedNoiseRotated=secondHalfAddedNoiseRotated';
 subplot(4,3,3);
 % figure;
 plot3(firstHalfOrigin(:,1),firstHalfOrigin(:,2),firstHalfOrigin(:,3));
 hold on
-plot3(secondHalf(:,1),secondHalf(:,2),secondHalf(:,3),'r');
+plot3(secondHalfAddedNoiseRotated(:,1),secondHalfAddedNoiseRotated(:,2),secondHalfAddedNoiseRotated(:,3),'r');
 title('rotated second half 30 degreee')
 hold off
 xlabel('x')
@@ -56,14 +56,14 @@ ylabel('y')
 zlabel('z')
 
 
-Move=zeros(size(secondHalf));
-Move(:,3)=10;
-secondHalf=secondHalf-Move;
+moveMatrix=zeros(size(secondHalfAddedNoiseRotated));
+moveMatrix(:,3)=10;
+secondHalfAddedNoiseRotatedMoved=secondHalfAddedNoiseRotated-moveMatrix;
 subplot(4,3,4);
 %figure;
 plot3(firstHalfOrigin(:,1),firstHalfOrigin(:,2),firstHalfOrigin(:,3));
 hold on
-plot3(secondHalf(:,1),secondHalf(:,2),secondHalf(:,3),'r');
+plot3(secondHalfAddedNoiseRotatedMoved(:,1),secondHalfAddedNoiseRotatedMoved(:,2),secondHalfAddedNoiseRotatedMoved(:,3),'r');
 title('shifted second half away')
 hold off
 xlabel('x')
@@ -71,12 +71,12 @@ ylabel('y')
 zlabel('z')
 
 
-[~,Z,transform] = procrustes(firstHalfOrigin(half-overlappingSize+1:half,:),secondHalf(1:overlappingSize,:),'scaling',false);
+[~,~,transform] = procrustes(firstHalfOrigin(half-overlappingSize+1:half,:),secondHalfAddedNoiseRotatedMoved(1:overlappingSize,:),'scaling',false);
 c = transform.c;
 T = transform.T;
-b = transform.b;
+% b = transform.b;
 
-secondHalfRecover = secondHalf*T+repmat(c(1,:),size(secondHalf,1),1) ;
+secondHalfRecover = secondHalfAddedNoiseRotatedMoved*T+repmat(c(1,:),size(secondHalfAddedNoiseRotatedMoved,1),1) ;
     
 
 subplot(4,3,5);
@@ -95,19 +95,10 @@ zlabel('z')
 
 %% shortest path-based method
 
-firstHalfOrigin=coords(1:half,:);
-secondHalfOrigin=coords(size(firstHalfOrigin,1)-overlappingSize+1:end,:);
-
-
-
-%add noise to second half
-secondHalf=secondHalfOrigin+noise;
-
-
 
 
 s1 = pdist2(firstHalfOrigin,firstHalfOrigin);
-s2 = pdist2(secondHalf,secondHalf);
+s2 = pdist2(secondHalfAddedNoise,secondHalfAddedNoise);
 s=zeros(totalPoints,totalPoints);
 s(1:half,1:half)=s1;
 s(half-overlappingSize+1:end,half-overlappingSize+1:end)=s2;
@@ -123,7 +114,7 @@ imagesc(s);
 %colorbar;
 title('s:set two blue parts into Inf')
 
-  s = Floyd_Warshall(s);
+s = Floyd_Warshall(s);
 %   s=ShortPath(s);
 subplot(4,3,8);
 imagesc(s);
@@ -133,12 +124,12 @@ title('s:after Floyd')
 
 p=cmdscale(s);
 p=p(:,1:3);
-firstHalfRecovered=p(1:half,:);
-secondHalfRecovered=p(size(firstHalfRecovered,1)-overlappingSize+1:end,:);
+
+secondHalfFromCmdscale=p(size(firstHalfOrigin,1)-overlappingSize+1:end,:);
 subplot(4,3,9);
-plot3(firstHalfRecovered(:,1),firstHalfRecovered(:,2),firstHalfRecovered(:,3));
+plot3(firstHalfOrigin(:,1),firstHalfOrigin(:,2),firstHalfOrigin(:,3));
 hold on
-plot3(secondHalfRecovered(:,1),secondHalfRecovered(:,2),secondHalfRecovered(:,3),'r');
+plot3(secondHalfFromCmdscale(:,1),secondHalfFromCmdscale(:,2),secondHalfFromCmdscale(:,3),'r');
 hold off
 title('get points using cmdscale:');
 xlabel('x')
@@ -147,24 +138,24 @@ zlabel('z')
 
 
 
-[~,Z,transform] = procrustes(firstHalfOrigin(half-overlappingSize+1:half,:),secondHalfRecovered(1:overlappingSize,:),'scaling',false);
+[~,~,transform] = procrustes(firstHalfOrigin(half-overlappingSize+1:half,:),secondHalfFromCmdscale(1:overlappingSize,:),'scaling',false);
 
 c = transform.c;
 T = transform.T;
 b = transform.b;
-secondHalfRecover = secondHalfRecovered*T+repmat(c(1,:),size(secondHalfRecovered,1),1) ;
+secondHalfRecovered = secondHalfFromCmdscale*T+repmat(c(1,:),size(secondHalfFromCmdscale,1),1) ;
 subplot(4,3,10);
 plot3(firstHalfOrigin(:,1),firstHalfOrigin(:,2),firstHalfOrigin(:,3));
 hold on
-plot3(secondHalfRecover(:,1),secondHalfRecover(:,2),secondHalfRecover(:,3),'r');
+plot3(secondHalfRecovered(:,1),secondHalfRecovered(:,2),secondHalfRecovered(:,3),'r');
 hold off
-diff2=RMSD( secondHalfOrigin,secondHalfRecover );
+diff2=RMSD( secondHalfOrigin,secondHalfRecovered );
 title(strcat('shortest path RMSD:', num2str(diff2)))
 xlabel('x')
 ylabel('y')
 zlabel('z')
 
-  set(gcf,'PaperType','usletter')
-  print('-dpng','-r0',strcat(proteinName,'Alpha',num2str(alpha),'OverlappingSize',num2str(overlappingSize)))
+%   set(gcf,'PaperType','usletter')
+%   print('-dpng','-r0',strcat(proteinName,'Alpha',num2str(alpha),'OverlappingSize',num2str(overlappingSize)))
 
   end
