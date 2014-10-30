@@ -153,7 +153,7 @@ zlabel('z')
 
 
 
-[~,~,transform] = procrustes(firstHalfOrigin(half-overlappingSize+1:half,:),secondHalfFromCmdscale(1:overlappingSize,:),'scaling',false);
+[~,~,transform] = procrustes(coords,p,'scaling',false);
 
 c = transform.c;
 T = transform.T;

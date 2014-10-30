@@ -138,7 +138,7 @@ zlabel('z')
 
 
 
-[~,~,transform] = procrustes(firstHalfOrigin(half-overlappingSize+1:half,:),secondHalfFromCmdscale(1:overlappingSize,:),'scaling',false);
+[~,~,transform] = procrustes(coords,p,'scaling',false);
 
 c = transform.c;
 T = transform.T;
@@ -155,7 +155,7 @@ xlabel('x')
 ylabel('y')
 zlabel('z')
 
-%   set(gcf,'PaperType','usletter')
-%   print('-dpng','-r0',strcat(proteinName,'Alpha',num2str(alpha),'OverlappingSize',num2str(overlappingSize)))
+  set(gcf,'PaperType','usletter')
+  print('-dpng','-r0',strcat(proteinName,'Alpha',num2str(alpha),'OverlappingSize',num2str(overlappingSize)))
 
   end
