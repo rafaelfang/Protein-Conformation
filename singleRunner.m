@@ -100,7 +100,7 @@ plot3(firstHalfOrigin(:,1),firstHalfOrigin(:,2),firstHalfOrigin(:,3));
 hold on
 plot3(secondHalfRecover(:,1),secondHalfRecover(:,2),secondHalfRecover(:,3),'r');
 hold off
-diff1=RMSD( secondHalfOrigin,secondHalfRecover);
+diff1=RMSD( coords,[firstHalfOrigin(1:size(firstHalfOrigin,1)-overlappingSize,:);secondHalfRecover]);
 title(strcat('superpos RMSD:',num2str(diff1)))
 xlabel('x')
 ylabel('y')
@@ -164,7 +164,8 @@ plot3(firstHalfOrigin(:,1),firstHalfOrigin(:,2),firstHalfOrigin(:,3));
 hold on
 plot3(secondHalfRecovered(:,1),secondHalfRecovered(:,2),secondHalfRecovered(:,3),'r');
 hold off
-diff2=RMSD( secondHalfOrigin,secondHalfRecovered );
+
+diff2=RMSD( coords,[firstHalfOrigin(1:size(firstHalfOrigin,1)-overlappingSize,:);secondHalfRecovered]);
 title(strcat('shortest path RMSD:', num2str(diff2)))
 xlabel('x')
 ylabel('y')
