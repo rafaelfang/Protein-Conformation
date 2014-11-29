@@ -1,10 +1,6 @@
-close all
-clc
-clear
-
-load T0659TemplatesData;
-primaryTemplateSelected=1;
+function [primaryTemplate,plotflag]=mufold(templates,primaryTemplateSelected)
 %% find the holes in the primary template
+plotflag=1;
 primaryTemplate=templates{primaryTemplateSelected, 1};
 isHole=zeros(size(primaryTemplate,1),1);
 for i=1:size(primaryTemplate,1)
@@ -50,13 +46,26 @@ end
 %% Round 1: fill in the hole whose size is less than or equal to 2
 
 for i=1:size(holeInfo,1)
-    if(holeInfo(i,3)==1)
+    if(holeInfo(i,3)==1&&holeInfo(i,1)==1)
+       primaryTemplate(holeInfo(i,1),:)=2*primaryTemplate(holeInfo(i,1)+1,:)-primaryTemplate(holeInfo(i,1)+2,:);
+       holeInfo(i,4)=-99;% it means this hole is filled by average value
+    elseif(holeInfo(i,3)==1&&holeInfo(i,1)==size(primaryTemplate,1))
+       primaryTemplate(holeInfo(i,1),:)=2*primaryTemplate(holeInfo(i,1)-1,:)-primaryTemplate(holeInfo(i,1)-2,:);
+       holeInfo(i,4)=-99;
+    elseif(holeInfo(i,3)==1)
        primaryTemplate(holeInfo(i,1),:)=(primaryTemplate(holeInfo(i,1)-1,:)+primaryTemplate(holeInfo(i,1)+1,:))/2;
        holeInfo(i,4)=-99;% it means this hole is filled by average value
-    end
-    if(holeInfo(i,3)==2)
-       primaryTemplate(holeInfo(i,1),:)=primaryTemplate(holeInfo(i,1)-1,:)+(primaryTemplate(holeInfo(i,1)+2,:)+primaryTemplate(holeInfo(i,1)-1,:))/3;
-       primaryTemplate(holeInfo(i,1)+1,:)=primaryTemplate(holeInfo(i,1)-1,:)+2*(primaryTemplate(holeInfo(i,1)+2,:)+primaryTemplate(holeInfo(i,1)-1,:))/3;
+    elseif(holeInfo(i,3)==2&&holeInfo(i,1)==1)
+       primaryTemplate(holeInfo(i,1),:)=3*primaryTemplate(holeInfo(i,1)+2,:)-2*primaryTemplate(holeInfo(i,1)+3,:);
+       primaryTemplate(holeInfo(i,2)+1,:)=2*primaryTemplate(holeInfo(i,1)+2,:)-primaryTemplate(holeInfo(i,1)+3,:);
+       holeInfo(i,4)=-99;% it means this hole is filled by average value
+    elseif(holeInfo(i,3)==2&&holeInfo(i,1)==size(primaryTemplate,1)-1)
+       primaryTemplate(holeInfo(i,1),:)=2*primaryTemplate(holeInfo(i,1)-1,:)-primaryTemplate(holeInfo(i,1)-2,:);
+       primaryTemplate(holeInfo(i,1)+1,:)=3*primaryTemplate(holeInfo(i,1)-1,:)-2*primaryTemplate(holeInfo(i,1)-2,:);
+       holeInfo(i,4)=-99;
+    elseif(holeInfo(i,3)==2)
+       primaryTemplate(holeInfo(i,1),:)=primaryTemplate(holeInfo(i,1)-1,:)+(primaryTemplate(holeInfo(i,1)+2,:)-primaryTemplate(holeInfo(i,1)-1,:))/3;
+       primaryTemplate(holeInfo(i,1)+1,:)=primaryTemplate(holeInfo(i,1)-1,:)+2*(primaryTemplate(holeInfo(i,1)+2,:)-primaryTemplate(holeInfo(i,1)-1,:))/3;
        holeInfo(i,4)=-99;% it means this hole is filled by average value
     end
     
@@ -92,9 +101,10 @@ end
 
 for ind=1:size(holeInfo,1)
    if(holeInfo(ind,4)==-1) 
-      disp('this part of tehe primary template can not be filled by other templates.');
+      disp(['primary template: ',num2str(primaryTemplateSelected),' can not be filled by other templates.']);
       disp(['Start From:',num2str(holeInfo(ind,1))]);
       disp(['End at:',num2str(holeInfo(ind,2))]);
+      plotflag=0;
    end
 end
 
@@ -135,7 +145,7 @@ for ind=1:size(holeInfo,1)
     primaryTemplate(startPos:endPos,:)=Z;
 end
 
-
+end
 
 
 
