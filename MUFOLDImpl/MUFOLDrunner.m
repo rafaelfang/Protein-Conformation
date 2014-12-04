@@ -1,6 +1,8 @@
 close all
 clc
 clear
+%MUFOLD runner
+%written by Chao Fang
 
 load T0659TemplatesData;
 [ templatesSorted ] = sortTemplateBasedOnEValue( templates,Escores );
@@ -25,9 +27,10 @@ end
 
 
 figure;
-for primaryTemplateSelected=1:numOfPrimaryTemplates
+ for primaryTemplateSelected=1:numOfPrimaryTemplates
     %primaryTemplateSelected=6; %debug use
     %primaryTemplateSelected=7; %debug use
+    %primaryTemplateSelected=8; %debug use
     [primaryTemplateBuilt{primaryTemplateSelected,1},plotflag]=mufold(templatesSorted,primaryTemplateSelected);
     if(plotflag==1)
         subplot(3,3,primaryTemplateSelected);
@@ -37,4 +40,4 @@ for primaryTemplateSelected=1:numOfPrimaryTemplates
     else 
         
     end
-end
+ end
