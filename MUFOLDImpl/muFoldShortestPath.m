@@ -97,26 +97,26 @@ for ind=1:size(holeInfo,1)
     startPos=holeInfo(ind,1);
     endPos=holeInfo(ind,2);
     holeSize=holeInfo(ind,3);
-    dockTemp=templates{holeInfo(ind,4),1};
-    dockPatchMatrix=pdist2(dockTemp,dockTemp,'euclidean');
+    coverTemp=templates{holeInfo(ind,4),1};
+    coverPatchMatrix=pdist2(coverTemp,coverTemp,'euclidean');
     if(startPos==1)
-        dockingRange=[endPos+1:endPos+6-1];
+        coverRange=[1:endPos+6-1];
     elseif(startPos==2)
-        dockingRange=[1,endPos+1:endPos+5-1];
+        coverRange=[1:endPos+5-1];
     elseif(startPos==3)
-        dockingRange=[1:2,endPos+1:endPos+4-1];
+        coverRange=[1:endPos+4-1];
     elseif(endPos==size(primaryTemplate,1))
-        dockingRange=[startPos-7+1:startPos-1];
+        coverRange=[startPos-7+1:size(primaryTemplate,1)];
     elseif(endPos==size(primaryTemplate,1)-1)
-        dockingRange=[startPos-6+1:startPos-1,size(primaryTemplate,1)];
+        coverRange=[startPos-6+1:size(primaryTemplate,1)];
     elseif(endPos==size(primaryTemplate,1)-2)
-        dockingRange=[startPos-5+1:startPos-1,size(primaryTemplate,1)-1,size(primaryTemplate,1)];
+        coverRange=[startPos-5+1:size(primaryTemplate,1)];
     else
-        dockingRange=[startPos-4+1:startPos-1,endPos+1:endPos+4-1];
+        coverRange=[startPos-4+1:endPos+4-1];
     end
     
-    D(dockingRange,dockingRange)=(D(dockingRange,dockingRange)+dockPatchMatrix(dockingRange,dockingRange))/2;
-    
+    coverage=coverPatchMatrix(coverRange,coverRange);
+    D(coverRange,coverRange)=coverage;
     
 end
 
