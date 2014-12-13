@@ -1,6 +1,13 @@
-function [primaryTemplate,plotflag,uncoveredHoleInfo]=muFoldShortestPath(templates,primaryTemplateSelected)
+function [primaryTemplate]=muFoldShortestPath(templates,primaryTemplateSelected)
+% close all
+% clear
+% clc
+% load T0659TemplatesData.mat
+% primaryTemplateSelected=1;
+
+
 %% find the holes in the primary template
-plotflag=1;
+
 primaryTemplate=templates{primaryTemplateSelected, 1};
 isHole=zeros(size(primaryTemplate,1),1);
 for i=1:size(primaryTemplate,1)
@@ -8,6 +15,9 @@ for i=1:size(primaryTemplate,1)
         isHole(i,1)=1;
     end
 end
+
+
+
 %% find the starting and ending position of the holes
 %holeInfo matrix is defined as: 
 %ith hole: startPos,endPos,holeSize,hole patch taken from other templates
@@ -44,37 +54,14 @@ if counter~=0
 end
 
 
-%% Round 1: fill in the hole whose size is less than or equal to 2
-
-for i=1:size(holeInfo,1)
-    if(holeInfo(i,3)==1&&holeInfo(i,1)==1)
-       primaryTemplate(holeInfo(i,1),:)=2*primaryTemplate(holeInfo(i,1)+1,:)-primaryTemplate(holeInfo(i,1)+2,:);
-       holeInfo(i,4)=-99;% it means this hole is filled by average value
-    elseif(holeInfo(i,3)==1&&holeInfo(i,1)==size(primaryTemplate,1))
-       primaryTemplate(holeInfo(i,1),:)=2*primaryTemplate(holeInfo(i,1)-1,:)-primaryTemplate(holeInfo(i,1)-2,:);
-       holeInfo(i,4)=-99;
-    elseif(holeInfo(i,3)==1)
-       primaryTemplate(holeInfo(i,1),:)=(primaryTemplate(holeInfo(i,1)-1,:)+primaryTemplate(holeInfo(i,1)+1,:))/2;
-       holeInfo(i,4)=-99;% it means this hole is filled by average value
-    elseif(holeInfo(i,3)==2&&holeInfo(i,1)==1)
-       primaryTemplate(holeInfo(i,1),:)=3*primaryTemplate(holeInfo(i,1)+2,:)-2*primaryTemplate(holeInfo(i,1)+3,:);
-       primaryTemplate(holeInfo(i,1)+1,:)=2*primaryTemplate(holeInfo(i,1)+2,:)-primaryTemplate(holeInfo(i,1)+3,:);
-       holeInfo(i,4)=-99;% it means this hole is filled by average value
-    elseif(holeInfo(i,3)==2&&holeInfo(i,1)==size(primaryTemplate,1)-1)
-       primaryTemplate(holeInfo(i,1),:)=2*primaryTemplate(holeInfo(i,1)-1,:)-primaryTemplate(holeInfo(i,1)-2,:);
-       primaryTemplate(holeInfo(i,1)+1,:)=3*primaryTemplate(holeInfo(i,1)-1,:)-2*primaryTemplate(holeInfo(i,1)-2,:);
-       holeInfo(i,4)=-99;
-    elseif(holeInfo(i,3)==2)
-       primaryTemplate(holeInfo(i,1),:)=primaryTemplate(holeInfo(i,1)-1,:)+(primaryTemplate(holeInfo(i,1)+2,:)-primaryTemplate(holeInfo(i,1)-1,:))/3;
-       primaryTemplate(holeInfo(i,1)+1,:)=primaryTemplate(holeInfo(i,1)-1,:)+2*(primaryTemplate(holeInfo(i,1)+2,:)-primaryTemplate(holeInfo(i,1)-1,:))/3;
-       holeInfo(i,4)=-99;% it means this hole is filled by average value
-    end
-    
-end
+%% Round 1: replace the big distance value with 3.8
+D=pdist2(primaryTemplate,primaryTemplate,'euclidean');
+D(D>10e+2)=3.8;
 
 
 
-%% Round 2: find available patches
+
+%% Round 2: find available patches 
 for ind=1:size(holeInfo,1)
     if(holeInfo(ind,3)==1||holeInfo(ind,3)==2)
         continue;
@@ -99,19 +86,8 @@ for ind=1:size(holeInfo,1)
 end
 
 
-uncoveredHoleInfo=[];
-for ind=1:size(holeInfo,1)
-   if(holeInfo(ind,4)==-1) 
-      disp(['primary template: ',num2str(primaryTemplateSelected),' can not be filled by other templates.']);
-      disp(['Start From:',num2str(holeInfo(ind,1))]);
-      disp(['End at:',num2str(holeInfo(ind,2))]);
-      plotflag=0;
-      uncoveredHoleInfo=[uncoveredHoleInfo;holeInfo(ind,1:2)];
-   end
-end
 
-
-%% docking using the patches found from other templates;
+%% cover the hole in distance matrix using the patches' distance matrix found from other templates;
 
 
 for ind=1:size(holeInfo,1)
@@ -122,6 +98,7 @@ for ind=1:size(holeInfo,1)
     endPos=holeInfo(ind,2);
     holeSize=holeInfo(ind,3);
     dockTemp=templates{holeInfo(ind,4),1};
+    dockPatchMatrix=pdist2(dockTemp,dockTemp,'euclidean');
     if(startPos==1)
         dockingRange=[endPos+1:endPos+6-1];
     elseif(startPos==2)
@@ -137,16 +114,16 @@ for ind=1:size(holeInfo,1)
     else
         dockingRange=[startPos-4+1:startPos-1,endPos+1:endPos+4-1];
     end
-    X=primaryTemplate(dockingRange,:);
-    Y=dockTemp(dockingRange,:);
-    [~,~,transform] = procrustes(X,Y);
-    c = transform.c;
-    T = transform.T;
-    b = transform.b;
-    Z = b*dockTemp(startPos:endPos,:)*T + repmat(c(1,:),holeSize,1);
-    primaryTemplate(startPos:endPos,:)=Z;
+    
+    D(dockingRange,dockingRange)=(D(dockingRange,dockingRange)+dockPatchMatrix(dockingRange,dockingRange))/2;
+    
+    
 end
 
+
+[ dist ] = Floyd_Warshall( D );
+p=cmdscale(dist);
+primaryTemplate=p(:,1:3);
 end
 
 
