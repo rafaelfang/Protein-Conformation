@@ -4,7 +4,7 @@ clear
 %MUFOLD runner
 %written by Chao Fang
 
-load T0659TemplatesData;
+load T0753TemplatesData;
 [ templatesSorted ] = sortTemplateBasedOnEValue( templates,Escores );
 numOfPrimaryTemplates=9;
 primaryTemplateBuilt=cell(numOfPrimaryTemplates,1);
