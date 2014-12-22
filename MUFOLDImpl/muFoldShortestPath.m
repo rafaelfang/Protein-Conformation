@@ -56,7 +56,21 @@ end
 
 %% Round 1: replace the big distance value with 3.8
 D=pdist2(primaryTemplate,primaryTemplate,'euclidean');
-D(D>10e+2)=3.8;
+for i=1:size(holeInfo,1)
+    if(holeInfo(i,3)==1)
+       D(holeInfo(i,1),holeInfo(i,1)+1)=3.8;
+       D(holeInfo(i,1)+1,holeInfo(i,1))=3.8;
+       holeInfo(i,4)=-99;
+    elseif(holeInfo(i,3)==2)
+       D(holeInfo(i,1),holeInfo(i,1)+1)=3.8;
+       D(holeInfo(i,1)+1,holeInfo(i,1))=3.8;
+       D(holeInfo(i,1)+1,holeInfo(i,1)+2)=3.8;
+       D(holeInfo(i,1)+2,holeInfo(i,1)+1)=3.8;
+       holeInfo(i,4)=-99;
+    end
+    
+end
+
 
 
 
