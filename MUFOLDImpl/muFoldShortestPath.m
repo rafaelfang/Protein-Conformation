@@ -114,17 +114,17 @@ for ind=1:size(holeInfo,1)
     coverTemp=templates{holeInfo(ind,4),1};
     coverPatchMatrix=pdist2(coverTemp,coverTemp,'euclidean');
     if(startPos==1)
-        coverRange=[1:endPos+6-1];
+        coverRange=[1:endPos+6];
     elseif(startPos==2)
-        coverRange=[1:endPos+5-1];
+        coverRange=[1:endPos+5];
     elseif(startPos==3)
-        coverRange=[1:endPos+4-1];
+        coverRange=[1:endPos+4];
     elseif(endPos==size(primaryTemplate,1))
-        coverRange=[startPos-7+1:size(primaryTemplate,1)];
+        coverRange=[startPos-6:size(primaryTemplate,1)];
     elseif(endPos==size(primaryTemplate,1)-1)
-        coverRange=[startPos-6+1:size(primaryTemplate,1)];
+        coverRange=[startPos-5:size(primaryTemplate,1)];
     elseif(endPos==size(primaryTemplate,1)-2)
-        coverRange=[startPos-5+1:size(primaryTemplate,1)];
+        coverRange=[startPos-4:size(primaryTemplate,1)];
     else
         coverRange=[startPos-4+1:endPos+4-1];
     end
