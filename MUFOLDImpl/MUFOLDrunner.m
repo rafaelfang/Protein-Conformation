@@ -28,8 +28,8 @@ primaryTemplateBuiltShortestPath=cell(numOfPrimaryTemplates,1);
 
 %% shortest path
 figure;
-for primaryTemplateSelected=1:numOfPrimaryTemplates
-    %primaryTemplateSelected=3; %debug use
+%for primaryTemplateSelected=1:numOfPrimaryTemplates
+    primaryTemplateSelected=5; %debug use
     %primaryTemplateSelected=7; %debug use
     %primaryTemplateSelected=8; %debug use
     [primaryTemplateBuiltShortestPath{primaryTemplateSelected,1}]=muFoldShortestPath(templatesSorted,primaryTemplateSelected);
@@ -39,7 +39,7 @@ for primaryTemplateSelected=1:numOfPrimaryTemplates
         plot3(temp(:,1),temp(:,2),temp(:,3));
         title(num2str(primaryTemplateSelected));
  
-end
+%end
 text('Position',[0,0],'String','shortestPath','color','b')   
 
 %% superposition
