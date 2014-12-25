@@ -123,19 +123,19 @@ for ind=1:size(holeInfo,1)
     holeSize=holeInfo(ind,3);
     dockTemp=templates{holeInfo(ind,4),1};
     if(startPos==1)
-        dockingRange=[endPos+1:endPos+6-1];
+        dockingRange=[endPos+1:endPos+6];
     elseif(startPos==2)
-        dockingRange=[1,endPos+1:endPos+5-1];
+        dockingRange=[1,endPos+1:endPos+5];
     elseif(startPos==3)
-        dockingRange=[1:2,endPos+1:endPos+4-1];
+        dockingRange=[1:2,endPos+1:endPos+4];
     elseif(endPos==size(primaryTemplate,1))
-        dockingRange=[startPos-7+1:startPos-1];
+        dockingRange=[startPos-6:startPos-1];
     elseif(endPos==size(primaryTemplate,1)-1)
-        dockingRange=[startPos-6+1:startPos-1,size(primaryTemplate,1)];
+        dockingRange=[startPos-5:startPos-1,size(primaryTemplate,1)];
     elseif(endPos==size(primaryTemplate,1)-2)
-        dockingRange=[startPos-5+1:startPos-1,size(primaryTemplate,1)-1,size(primaryTemplate,1)];
+        dockingRange=[startPos-4:startPos-1,size(primaryTemplate,1)-1,size(primaryTemplate,1)];
     else
-        dockingRange=[startPos-4+1:startPos-1,endPos+1:endPos+4-1];
+        dockingRange=[startPos-3:startPos-1,endPos+1:endPos+3];
     end
     X=primaryTemplate(dockingRange,:);
     Y=dockTemp(dockingRange,:);
