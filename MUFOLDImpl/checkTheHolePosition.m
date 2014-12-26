@@ -3,7 +3,7 @@ clc
 clear
 %check the template hole position to figure out the type of the holes
 %written by Chao Fang
-load T0659TemplatesData;
+load T0753TemplatesData;
 [ templatesSorted ] = sortTemplateBasedOnEValue( templates,Escores );
 n=size(templatesSorted{1,1},1);
 m=size(templatesSorted,1);
