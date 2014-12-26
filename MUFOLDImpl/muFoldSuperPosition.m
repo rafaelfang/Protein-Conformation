@@ -1,6 +1,6 @@
-function [primaryTemplate,plotflag,uncoveredHoleInfo]=muFoldSuperPosition(templates,primaryTemplateSelected)
+function [primaryTemplate]=muFoldSuperPosition(templates,primaryTemplateSelected)
 %% find the holes in the primary template
-plotflag=1;
+
 primaryTemplate=templates{primaryTemplateSelected, 1};
 isHole=zeros(size(primaryTemplate,1),1);
 for i=1:size(primaryTemplate,1)
@@ -99,16 +99,16 @@ for ind=1:size(holeInfo,1)
 end
 
 
-uncoveredHoleInfo=[];
-for ind=1:size(holeInfo,1)
-   if(holeInfo(ind,4)==-1) 
-      disp(['primary template: ',num2str(primaryTemplateSelected),' can not be filled by other templates.']);
-      disp(['Start From:',num2str(holeInfo(ind,1))]);
-      disp(['End at:',num2str(holeInfo(ind,2))]);
-      plotflag=0;
-      uncoveredHoleInfo=[uncoveredHoleInfo;holeInfo(ind,1:2)];
-   end
-end
+% uncoveredHoleInfo=[];
+% for ind=1:size(holeInfo,1)
+%    if(holeInfo(ind,4)==-1) 
+%       disp(['primary template: ',num2str(primaryTemplateSelected),' can not be filled by other templates.']);
+%       disp(['Start From:',num2str(holeInfo(ind,1))]);
+%       disp(['End at:',num2str(holeInfo(ind,2))]);
+%       plotflag=0;
+%       uncoveredHoleInfo=[uncoveredHoleInfo;holeInfo(ind,1:2)];
+%    end
+% end
 
 
 %% docking using the patches found from other templates;
@@ -147,6 +147,12 @@ for ind=1:size(holeInfo,1)
     primaryTemplate(startPos:endPos,:)=Z;
 end
 
+%% after superposition, apply shortest path
+
+D=pdist2(primaryTemplate,primaryTemplate,'euclidean');
+[ dist ] = Floyd_Warshall( D );
+p=cmdscale(dist);
+primaryTemplate=p(:,1:3);
 end
 
 
